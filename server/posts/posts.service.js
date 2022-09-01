@@ -12,7 +12,7 @@ const create = async (post) => {
 
 const deleteOne = async (id) => await PostModel.findByIdAndDelete(id)
 
-const update = async (id, fields) => await PostModel.findByIdAndUpdate(id, fields)
+const update = async (id, fields) => await PostModel.findByIdAndUpdate(id, fields, { new: true });
 
 export default {
   getAll,
