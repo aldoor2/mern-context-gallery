@@ -16,7 +16,7 @@ const handleErrors = (err, req, res, next) => {
     return res.status(status).json({ status: 'Error', message, additionalInfo })
   }
 
-  return res.status(500).json({ status: 'Error', message: 'Ups, something went wrong' })
+  return res.status(500).json({ status: 'Error', message: 'Oops, something went wrong' })
 }
 
 /**

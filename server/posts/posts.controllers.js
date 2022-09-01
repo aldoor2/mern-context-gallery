@@ -1,5 +1,8 @@
+import fs from 'fs-extra'
+
 import postsService from "./posts.service.js";
 import HttpException from '../app/HttpException.js'
+import { uploadImage, deleteImage } from "../app/cloudinary.js";
 
 export const getPosts = async (req, res, next) => {
   try {
@@ -26,6 +29,7 @@ export const getPost = async (req, res, next) => {
 export const createPost = async (req, res, next) => {
   const { title, description } = req.body
   let errors = []
+  let image
 
   try {
     if (!title || title.length === 0) {
@@ -40,7 +44,16 @@ export const createPost = async (req, res, next) => {
       return next(new HttpException(400, 'Expected a title and a description.', errors))
     }
 
-    const postSaved = await postsService.create({ title, description })
+    if (req.files.image) {
+      const result = await uploadImage(req.files.image.tempFilePath)
+      await fs.remove(req.files.image.tempFilePath)
+      image = {
+        public_id: result.public_id,
+        url: result.secure_url,
+      }
+    }
+
+    const postSaved = await postsService.create({ title, description, image })
 
     return res.status(201).json({ status: 'Success', data: postSaved })
   } catch (error) {
@@ -55,6 +68,8 @@ export const deletePost = async (req, res, next) => {
     const postDeleted = await postsService.deleteOne(id)
 
     if (!postDeleted) return next(new HttpException(404, 'Post not found'))
+
+    if (postDeleted.image.public_id) await deleteImage(postDeleted.image.public_id)
 
     return res.sendStatus(204)
   } catch (error) {
