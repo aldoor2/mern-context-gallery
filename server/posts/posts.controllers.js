@@ -25,19 +25,24 @@ export const getPost = async (req, res, next) => {
 
 export const createPost = async (req, res, next) => {
   const { title, description } = req.body
+  let errors = []
 
   try {
-    if (!title || title.lenght === 0) {
-      return next(new HttpException(400, 'Title is required'))
+    if (!title || title.length === 0) {
+      errors.push('Title is required')
     }
 
-    if (!description || description.lenght === 0) {
-      return next(new HttpException(400, 'Description is required'))
+    if (!description || description.length === 0) {
+      errors.push('Description is required')
+    }
+
+    if (errors.length > 0) {
+      return next(new HttpException(400, 'Expected a title and a description.', errors))
     }
 
     const postSaved = await postsService.create({ title, description })
 
-    res.status(201).json({ status: 'Success', data: postSaved })
+    return res.status(201).json({ status: 'Success', data: postSaved })
   } catch (error) {
     next(new HttpException(400, error.message))
   }
