@@ -1,4 +1,12 @@
 import app from "./app.js";
+import { connectDB } from './db.js'
+import { PORT } from './config.js'
 
-app.listen(4000)
-console.log('🟢 Server is running on port', 4000)
+async function main() {
+  await connectDB()
+
+  app.listen(PORT)
+  console.log('🟢 Server is running on port', PORT)
+}
+
+main()
