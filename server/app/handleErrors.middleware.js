@@ -9,7 +9,7 @@ import HttpException from './HttpException.js'
  * @param next NextFunction function provided by Express
  */
 const handleErrors = (err, req, res, next) => {
-  console.error(error)
+  console.error(err.message)
 
   if (err instanceof HttpException) {
     const { status, message = 'Something went wrong', additionalInfo } = err
