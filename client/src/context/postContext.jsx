@@ -3,6 +3,7 @@ import { useState, createContext, useContext, useEffect } from 'react';
 import {
   createPostRequest,
   deletePostRequest,
+  getPostRequest,
   getPostsRequest,
 } from '../api/posts';
 
@@ -34,6 +35,11 @@ export const PostProvider = ({ children }) => {
       );
   };
 
+  const getPost = async (postId) => {
+    const res = await getPostRequest(postId);
+    return res.data.data;
+  };
+
   useEffect(() => {
     getPosts();
   }, []);
@@ -45,6 +51,7 @@ export const PostProvider = ({ children }) => {
         getPosts,
         createPost,
         deletePost,
+        getPost,
       }}
     >
       {children}
