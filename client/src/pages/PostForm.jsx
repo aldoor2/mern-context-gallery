@@ -6,23 +6,27 @@ import * as Yup from 'yup';
 
 import { usePosts } from '../context/postContext';
 
+const INITIAL_VALUES = {
+  title: '',
+  description: '',
+};
+
 export function PostForm() {
-  const { createPost, getPost } = usePosts();
+  const { createPost, getPost, updatePost } = usePosts();
   const navigate = useNavigate();
   const params = useParams();
-  const [post, setPost] = useState({
-    title: '',
-    description: '',
-  });
+  const [post, setPost] = useState(INITIAL_VALUES);
 
   useEffect(() => {
     (async () => {
       if (params.id) {
         const data = await getPost(params.id);
         setPost(data);
+      } else {
+        setPost(INITIAL_VALUES);
       }
     })();
-  }, []);
+  }, [params.id]);
 
   return (
     <div className='flex items-center justify-center'>
@@ -43,7 +47,12 @@ export function PostForm() {
             description: Yup.string().required('Description is required'),
           })}
           onSubmit={async (values, actions) => {
-            await createPost(values);
+            if (params.id) {
+              await updatePost(params.id, values);
+            } else {
+              await createPost(values);
+            }
+
             navigate('/');
           }}
           enableReinitialize={true}
@@ -88,7 +97,7 @@ export function PostForm() {
 
               <button
                 type='submit'
-                className='px-4 py-2 w-full text-white bg-indigo-600 hover:bg-indigo-500 rounded mt-2 focus:outline-none disabled:bg-indigo-400'
+                className='px-4 py-2 w-full text-white bg-indigo-600 hover:bg-indigo-500 rounded mt-2 focus:outline-none focus:bg-indigo-500 disabled:bg-indigo-400'
               >
                 Save
               </button>
