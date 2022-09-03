@@ -24,8 +24,12 @@ export const PostProvider = ({ children }) => {
   };
 
   const createPost = async (post) => {
-    const res = await createPostRequest(post);
-    setPosts((oldPosts) => [...oldPosts, { ...res.data.data }]);
+    try {
+      const res = await createPostRequest(post);
+      setPosts((oldPosts) => [...oldPosts, res.data.data]);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const deletePost = async (postId) => {

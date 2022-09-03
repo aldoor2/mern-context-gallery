@@ -1,14 +1,15 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import * as Yup from 'yup';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 import { usePosts } from '../context/postContext';
 
 const INITIAL_VALUES = {
   title: '',
   description: '',
+  image: null,
 };
 
 export function PostForm() {
@@ -53,11 +54,12 @@ export function PostForm() {
               await createPost(values);
             }
 
+            actions.setSubmitting(false);
             navigate('/');
           }}
           enableReinitialize={true}
         >
-          {({ handleSubmit }) => (
+          {({ handleSubmit, setFieldValue, isSubmitting }) => (
             <Form onSubmit={handleSubmit}>
               <label
                 htmlFor='title'
@@ -86,7 +88,7 @@ export function PostForm() {
                 component='textarea'
                 name='description'
                 placeholder='Description'
-                className='px-3 py-2 focus:outline-none rounded bg-gray-600 text-white w-full mb-4'
+                className='px-3 py-2 focus:outline-none rounded bg-gray-600 text-white w-full'
                 rows={3}
               />
               <ErrorMessage
@@ -95,11 +97,29 @@ export function PostForm() {
                 name='description'
               />
 
+              <label
+                htmlFor='image'
+                className='text-md block font-bold text-gray-400 py-1'
+              >
+                Image
+              </label>
+              <input
+                type='file'
+                name='image'
+                className='px-3 py-2 focus:outline-none rounded bg-gray-600 text-white text-xs w-full'
+                onChange={(e) => setFieldValue('image', e.target.files[0])}
+              />
+
               <button
                 type='submit'
-                className='px-4 py-2 w-full text-white bg-indigo-600 hover:bg-indigo-500 rounded mt-2 focus:outline-none focus:bg-indigo-500 disabled:bg-indigo-400'
+                className='px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-500 rounded mt-2 focus:outline-none focus:bg-indigo-500 disabled:bg-indigo-400'
+                disabled={isSubmitting}
               >
-                Save
+                {isSubmitting ? (
+                  <AiOutlineLoading3Quarters className='animate-spin w-5 h-5' />
+                ) : (
+                  'Save'
+                )}
               </button>
             </Form>
           )}

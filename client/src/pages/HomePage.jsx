@@ -16,10 +16,18 @@ export function HomePage() {
     );
 
   return (
-    <div>
-      <Link to='/new' className='text-white'>
-        Create New Post
-      </Link>
+    <div className='text-white'>
+      <header className='flex justify-between items-center py-4'>
+        <h1 className='text-2xl text-gray-300 font-bold'>
+          Post ({posts.length})
+        </h1>
+        <Link
+          to='/new'
+          className='px-3 py-2 text-sm rounded bg-indigo-600 hover:bg-indigo-500 focus:outline-none'
+        >
+          Create New Post
+        </Link>
+      </header>
 
       <div className='grid grid-cols-3 gap-3'>
         {posts.map((post) => (

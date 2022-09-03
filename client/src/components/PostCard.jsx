@@ -53,13 +53,23 @@ export function PostCard({ post }) {
           <h3 className='text-xl font-semibold'>{post.title}</h3>
           <button
             className='bg-zinc-600 hover:bg-red-500 text-sm px-2 py-1 rounded-sm'
-            onClick={() => handleDelete(post._id)}
+            onClick={(e) => {
+              handleDelete(post._id);
+              e.stopPropagation();
+            }}
           >
             Delete
           </button>
         </header>
         <p className='w-full'>{post.description}</p>
       </div>
+      {Boolean(post.image) && (
+        <img
+          src={post.image.url}
+          alt={post.title}
+          className='w-full h-64 object-cover'
+        />
+      )}
     </article>
   );
 }
