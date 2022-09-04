@@ -78,10 +78,34 @@ export const deletePost = async (req, res, next) => {
 }
 
 export const updatePost = async (req, res, next) => {
+  const { title, description } = req.body
   const { id } = req.params
+  const errors = []
+  let image
 
   try {
-    const postUpdated = await postsService.update(id, req.body)
+    if (!title || title.length === 0) {
+      errors.push('Title is required')
+    }
+
+    if (!description || description.length === 0) {
+      errors.push('Description is required')
+    }
+
+    if (errors.length > 0) {
+      return next(new HttpException(400, 'Expected a title and a description.', errors))
+    }
+
+    if (req.files?.image) {
+      const result = await uploadImage(req.files.image.tempFilePath)
+      await fs.remove(req.files.image.tempFilePath)
+      image = {
+        public_id: result.public_id,
+        url: result.secure_url,
+      }
+    }
+
+    const postUpdated = await postsService.update(id, { title, description, image })
     return res.json({ status: 'Success', data: postUpdated })
   } catch (error) {
     next(new HttpException(400, error.message))
