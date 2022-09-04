@@ -29,4 +29,8 @@ app.use('/api/posts', postsRoutes)
 app.use(handleErrors.notFound)
 app.use(handleErrors.handleErrors)
 
+app.get('*', (req, res) => {
+  res.sendFile(join(__dirname, '../client/dist/index.html'))
+})
+
 export { app }
